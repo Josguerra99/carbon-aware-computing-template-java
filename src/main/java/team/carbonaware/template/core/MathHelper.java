@@ -7,6 +7,9 @@ import java.util.function.DoubleUnaryOperator;
 import java.util.function.ToDoubleFunction;
 
 public final class MathHelper {
+  /** Sample {@code (x, y)} — {@code x} is doy, UTC ms, solar hour, etc. depending on the model. */
+  public record XYPoint(double x, double y) {}
+
   private MathHelper() {}
 
   public static int dayOfYearUtc(Instant timestamp) {
@@ -116,15 +119,13 @@ public final class MathHelper {
     return new double[] {1, Math.sin(angle), Math.cos(angle)};
   }
 
-  /**
-   * Points as {@code [doy, y]} pairs (same shape as {@link #createLinearRegression} uses {@code [x, y]}).
-   */
-  public static DoubleUnaryOperator createSineCosineRegression(List<double[]> points) {
+  /** {@code x} on each point is day-of-year (TS: {@code doy}). */
+  public static DoubleUnaryOperator createSineCosineRegression(List<XYPoint> points) {
     if (points.size() < 3) {
       return null;
     }
-    var samples = points.stream().map(p -> sineFeatures(p[0])).toList();
-    var y = points.stream().map(p -> p[1]).toList();
+    var samples = points.stream().map(p -> sineFeatures(p.x())).toList();
+    var y = points.stream().map(XYPoint::y).toList();
     var predict = fitByFeatures(samples, y);
     if (predict == null) {
       return null;
@@ -132,22 +133,22 @@ public final class MathHelper {
     return doy -> predict.applyAsDouble(sineFeatures(doy));
   }
 
-  /** Sin/cos on normalized UTC ms within the sample span. Points are {@code [x, y]}. */
-  public static DoubleUnaryOperator createSineCosineRegressionOnTimeMs(List<double[]> points) {
+  /** Sin/cos on normalized UTC ms within the sample span. */
+  public static DoubleUnaryOperator createSineCosineRegressionOnTimeMs(List<XYPoint> points) {
     if (points.size() < 3) {
       return null;
     }
-    double tMin = points.getFirst()[0];
-    double tMax = points.getFirst()[0];
-    for (double[] point : points) {
-      tMin = Math.min(tMin, point[0]);
-      tMax = Math.max(tMax, point[0]);
+    double tMin = points.getFirst().x();
+    double tMax = points.getFirst().x();
+    for (XYPoint point : points) {
+      tMin = Math.min(tMin, point.x());
+      tMax = Math.max(tMax, point.x());
     }
     final double min = tMin;
     final double max = tMax;
     var samples =
-        points.stream().map(p -> sineFeaturesFromTimeMs(p[0], min, max)).toList();
-    var y = points.stream().map(p -> p[1]).toList();
+        points.stream().map(p -> sineFeaturesFromTimeMs(p.x(), min, max)).toList();
+    var y = points.stream().map(XYPoint::y).toList();
     var predict = fitByFeatures(samples, y);
     if (predict == null) {
       return null;
@@ -155,22 +156,21 @@ public final class MathHelper {
     return tMs -> predict.applyAsDouble(sineFeaturesFromTimeMs(tMs, min, max));
   }
 
-  /** Points are {@code [x, y]}. */
-  public static DoubleUnaryOperator createPolynomialSplineRegression(List<double[]> points) {
+  public static DoubleUnaryOperator createPolynomialSplineRegression(List<XYPoint> points) {
     if (points.size() < 8) {
       return null;
     }
-    double minX = points.getFirst()[0];
-    double maxX = points.getFirst()[0];
-    for (double[] point : points) {
-      minX = Math.min(minX, point[0]);
-      maxX = Math.max(maxX, point[0]);
+    double minX = points.getFirst().x();
+    double maxX = points.getFirst().x();
+    for (XYPoint point : points) {
+      minX = Math.min(minX, point.x());
+      maxX = Math.max(maxX, point.x());
     }
     double span = maxX - minX == 0 ? 1 : maxX - minX;
     final double min = minX;
     var samples =
-        points.stream().map(p -> polySplineFeatures((p[0] - min) / span)).toList();
-    var y = points.stream().map(p -> p[1]).toList();
+        points.stream().map(p -> polySplineFeatures((p.x() - min) / span)).toList();
+    var y = points.stream().map(XYPoint::y).toList();
     var predict = fitByFeatures(samples, y);
     if (predict == null) {
       return null;
@@ -190,16 +190,16 @@ public final class MathHelper {
     return Math.round(((utcHours + longitude / 15) % 24 + 24) % 24) % 24;
   }
 
-  public static DoubleUnaryOperator createLinearRegression(List<double[]> points) {
+  public static DoubleUnaryOperator createLinearRegression(List<XYPoint> points) {
     double sumX = 0;
     double sumY = 0;
     double sumXY = 0;
     double sumXX = 0;
-    for (double[] p : points) {
-      sumX += p[0];
-      sumY += p[1];
-      sumXY += p[0] * p[1];
-      sumXX += p[0] * p[0];
+    for (XYPoint p : points) {
+      sumX += p.x();
+      sumY += p.y();
+      sumXY += p.x() * p.y();
+      sumXX += p.x() * p.x();
     }
     int n = points.size();
     double slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
