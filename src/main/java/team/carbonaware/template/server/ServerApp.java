@@ -35,6 +35,7 @@ public final class ServerApp {
     Javalin app = Javalin.create(config -> config.showJavalinBanner = false);
     app.before(ctx -> ctx.header("Access-Control-Allow-Origin", "*"));
     app.options("/*", ctx -> ctx.status(HttpStatus.OK));
+    app.exception(Exception.class, ServerApp::handleUncaught);
 
     app.get("/", ctx -> ctx.html(
         "<!DOCTYPE html><html><head><meta charset=\"utf-8\">"
@@ -68,8 +69,10 @@ public final class ServerApp {
       latitude = place.latitude();
       longitude = place.longitude();
     } catch (Exception e) {
+      System.out.println("No se pudo leer el histórico de " + datasetId);
+      e.printStackTrace(System.out);
       ctx.status(HttpStatus.BAD_GATEWAY).json(Map.of(
-          "error", "No se pudo leer el histórico de " + datasetId
+          "error", "No se pudo leer el histórico de " + datasetId + ": " + rootMessage(e)
       ));
       return;
     }
@@ -89,6 +92,29 @@ public final class ServerApp {
       DebugLogs.allowDebugLogs = false;
     }
     ctx.json(Map.of("datasetId", datasetId, "slots", slots));
+  }
+
+  private static void handleUncaught(Exception e, Context ctx) {
+    Throwable root = rootCause(e);
+    System.out.println("Error en " + ctx.method() + " " + ctx.path() + ": " + root);
+    e.printStackTrace(System.out);
+    ctx.status(HttpStatus.INTERNAL_SERVER_ERROR).json(Map.of(
+        "error", root.getClass().getName() + ": " + rootMessage(root)
+    ));
+  }
+
+  private static Throwable rootCause(Throwable error) {
+    Throwable root = error;
+    while (root.getCause() != null && root.getCause() != root) {
+      root = root.getCause();
+    }
+    return root;
+  }
+
+  private static String rootMessage(Throwable error) {
+    Throwable root = rootCause(error);
+    String message = root.getMessage();
+    return message == null || message.isBlank() ? root.getClass().getSimpleName() : message;
   }
 
   private static Instant parseUtc(String value) {
