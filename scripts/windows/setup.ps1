@@ -12,7 +12,7 @@ Write-Host ""
 . (Join-Path $PSScriptRoot "resolve-java.ps1")
 
 $javaExe = Ensure-JavaForWorkshop
-Write-Host "Java: $(& $javaExe -version 2>&1 | Select-Object -First 1)"
+Write-Host "Java: $((Invoke-JavaVersionOutput -JavaExe $javaExe | Select-Object -First 1))"
 
 $MavenVersion = "3.9.10"
 $ToolsDir = Join-Path $Root ".tools"
@@ -38,7 +38,11 @@ function Get-MvnCommand {
 }
 
 $mvn = Get-MvnCommand
-Write-Host "Maven: $(& $mvn -version 2>&1 | Select-Object -First 1)"
+$prevEa = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+$mvnVersionLine = (& $mvn -version 2>&1 | Select-Object -First 1)
+$ErrorActionPreference = $prevEa
+Write-Host "Maven: $mvnVersionLine"
 
 Write-Host "Resolving dependencies..."
 & $mvn -q -DskipTests dependency:resolve compile

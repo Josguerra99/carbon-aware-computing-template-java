@@ -1,9 +1,20 @@
 #Requires -Version 5.1
 
+function Invoke-JavaVersionOutput {
+    param([string]$JavaExe)
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        return @(& $JavaExe -version 2>&1)
+    } finally {
+        $ErrorActionPreference = $prev
+    }
+}
+
 function Test-JavaExe21 {
     param([string]$JavaExe)
     if (-not (Test-Path -LiteralPath $JavaExe)) { return $false }
-    $versionText = (& $JavaExe -version 2>&1 | Out-String)
+    $versionText = (Invoke-JavaVersionOutput -JavaExe $JavaExe | Out-String)
     if ($versionText -match 'version "(\d+)') {
         return [int]$Matches[1] -ge 21
     }
