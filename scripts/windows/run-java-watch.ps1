@@ -65,7 +65,7 @@ function Start-JavaForecastWithWatch {
             }
             if ($state.Restart -and ((Get-Date) - $state.LastEvent).TotalMilliseconds -gt 800) {
                 $state.Restart = $false
-                Write-Host "Changes detected — restarting..."
+                Write-Host "Changes detected - restarting..."
                 Start-Server
             }
             Start-Sleep -Milliseconds 250
