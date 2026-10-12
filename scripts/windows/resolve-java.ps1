@@ -46,9 +46,9 @@ function Get-WindowsJavaCandidates {
         Get-ChildItem $hive -ErrorAction SilentlyContinue | ForEach-Object {
             $props = Get-ItemProperty -Path $_.PSPath -ErrorAction SilentlyContinue
             foreach ($name in @("Path", "JavaHome", "(default)")) {
-                $home = $props.$name
-                if ($home -and (Test-Path -LiteralPath $home)) {
-                    Add-Java (Join-Path $home "bin\java.exe")
+                $jdkHome = $props.$name
+                if ($jdkHome -and (Test-Path -LiteralPath $jdkHome)) {
+                    Add-Java (Join-Path $jdkHome "bin\java.exe")
                 }
             }
         }
