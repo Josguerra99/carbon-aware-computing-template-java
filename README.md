@@ -49,7 +49,6 @@ Si lo haces a mano:
 | **JDK 21+** | `winget install Microsoft.OpenJDK.21` o [Adoptium](https://adoptium.net/) | `sudo apt install openjdk-21-jdk` |
 | **Maven 3.9+** | En PATH o deja que `setup` lo ponga en `.tools/` | Igual |
 | **Config** | Copia `.env.example` → `.env` y ajusta `MAIN_SERVER_URL` | Igual |
-| **Firewall (LAN)** | `run.cmd --fix-permissions` si la LAN falla | Abre el puerto en `ufw` si usas firewall |
 
 Arranque manual:
 
