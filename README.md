@@ -36,7 +36,7 @@ bash scripts/ubuntu/run.sh
 
 ## Windows y la LAN del taller
 
-Al escuchar en **0.0.0.0:3916**, Windows puede crear reglas para **java.exe** y bloquear **Private** por error. **`run.cmd`** llama a `ensure-lan-access.ps1` antes del servidor (UAC si hace falta): quita esos Block, Allow en Private y regla de puerto LAN. Wi‑Fi **Private**; en el popup de Windows, **Permitir** en redes privadas.
+En el **primer** **`run.cmd`**, Windows suele mostrar el aviso de **java.exe**: **Red privada** + **Permitir**. **`run.cmd`** solo pide UAC si quedó **Block** en Private.
 
 ## Setup manual
 

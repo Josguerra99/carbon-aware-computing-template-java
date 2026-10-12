@@ -56,4 +56,8 @@ Write-Host "Resolving dependencies..."
 & $mvn -q -DskipTests dependency:resolve compile
 
 Write-Host ""
+Write-Host "La primera vez que ejecutes run.cmd, Windows puede preguntar por java.exe." -ForegroundColor Cyan
+Write-Host "Elige RED PRIVADA y PERMITIR (Maven tarda en arrancar; el aviso sale al abrir el puerto 3916)."
+
+Write-Host ""
 Write-Host "Setup complete. Run: scripts\windows\run.cmd" -ForegroundColor Green
