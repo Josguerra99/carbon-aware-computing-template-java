@@ -36,7 +36,7 @@ bash scripts/ubuntu/run.sh
 
 ## Windows y la LAN del taller
 
-En el **primer** **`run.cmd`**, Windows suele mostrar el aviso de **java.exe**: **Red privada** + **Permitir**. **`run.cmd`** solo pide UAC si quedó **Block** en Private.
+**`run.cmd`**: aviso al inicio; al arrancar Maven, el popup de **java.exe** (**Red privada** + **Permitir**). **UAC** solo si quedó **Block** en Private.
 
 ## Setup manual
 

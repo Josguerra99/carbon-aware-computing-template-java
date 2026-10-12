@@ -5,4 +5,5 @@ target/
 cache/
 data/
 .env
+.local/
 src/main/java/team/carbonaware/template/workshop/
