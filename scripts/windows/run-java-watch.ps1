@@ -38,7 +38,7 @@ function Start-JavaForecastWithWatch {
         & $MvnExe -q compile
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         Write-Host "Server running (Ctrl+C to stop). Edit Java under src/main/java to reload."
-        $state.Proc = Start-Process -FilePath $MvnExe -ArgumentList @("-q", "exec:java") -WorkingDirectory $Root -PassThru
+        $state.Proc = Start-Process -FilePath $MvnExe -ArgumentList @("-q", "exec:java") -WorkingDirectory $Root -NoNewWindow -PassThru
     }
 
     $handler = {
