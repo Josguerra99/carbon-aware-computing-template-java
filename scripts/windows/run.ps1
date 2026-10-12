@@ -16,6 +16,8 @@ foreach ($a in @($RemainingArgs)) {
 }
 
 & (Join-Path $PSScriptRoot "../ensure-env.ps1")
+. (Join-Path $PSScriptRoot "resolve-java.ps1")
+Ensure-JavaForWorkshop | Out-Null
 
 $MavenVersion = "3.9.10"
 $PortableMaven = Join-Path $Root ".tools\apache-maven-$MavenVersion\bin\mvn.cmd"
@@ -44,10 +46,7 @@ if (Test-Path ".env") {
 $port = if ($env:PORT) { $env:PORT } else { "3916" }
 
 if ($fixPermissions) {
-    $javaExe = (Get-Command java -ErrorAction SilentlyContinue).Source
-    if (-not $javaExe) {
-        throw "java not found. Run scripts\windows\setup.cmd first."
-    }
+    $javaExe = (Get-Command java).Source
     & (Join-Path $PSScriptRoot "ensure-lan-access.ps1") -ProgramPath $javaExe -ServerPort ([int]$port) -Force
 }
 

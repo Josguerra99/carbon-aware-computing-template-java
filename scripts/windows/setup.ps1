@@ -9,22 +9,10 @@ Write-Host "Before run: set MAIN_SERVER_URL in .env to the URL from your facilit
 Write-Host ""
 
 & (Join-Path $PSScriptRoot "../ensure-env.ps1")
+. (Join-Path $PSScriptRoot "resolve-java.ps1")
 
-function Test-Java21 {
-    if (-not (Get-Command java -ErrorAction SilentlyContinue)) { return $false }
-    $versionText = (java -version 2>&1 | Out-String)
-    if ($versionText -match 'version "(\d+)') {
-        return [int]$Matches[1] -ge 21
-    }
-    return $false
-}
-
-if (-not (Test-Java21)) {
-    Write-Host "Java 21+ not found on PATH." -ForegroundColor Yellow
-    Write-Host "Install: winget install Microsoft.OpenJDK.21  (or https://adoptium.net/)"
-    throw "JDK 21 or newer is required."
-}
-Write-Host "Java: $(java -version 2>&1 | Select-Object -First 1)"
+$javaExe = Ensure-JavaForWorkshop
+Write-Host "Java: $(& $javaExe -version 2>&1 | Select-Object -First 1)"
 
 $MavenVersion = "3.9.10"
 $ToolsDir = Join-Path $Root ".tools"
