@@ -1,0 +1,8 @@
+target/
+.tools/
+.idea/
+*.iml
+cache/
+data/
+.env
+src/main/java/team/carbonaware/template/workshop/
