@@ -1,7 +1,19 @@
 #Requires -Version 5.1
+param(
+    [Parameter(ValueFromRemainingArguments = $true)]
+    [string[]]$RemainingArgs
+)
+
 $ErrorActionPreference = "Stop"
 $Root = Resolve-Path (Join-Path $PSScriptRoot "../..")
 Set-Location $Root
+
+$fixPermissions = $false
+foreach ($a in @($RemainingArgs)) {
+    if ($a -eq "--fix-permissions" -or $a -eq "-FixPermissions") {
+        $fixPermissions = $true
+    }
+}
 
 & (Join-Path $PSScriptRoot "../ensure-env.ps1")
 
@@ -30,5 +42,14 @@ if (Test-Path ".env") {
 }
 
 $port = if ($env:PORT) { $env:PORT } else { "3916" }
+
+if ($fixPermissions) {
+    $javaExe = (Get-Command java -ErrorAction SilentlyContinue).Source
+    if (-not $javaExe) {
+        throw "java not found. Run scripts\windows\setup.cmd first."
+    }
+    & (Join-Path $PSScriptRoot "ensure-lan-access.ps1") -ProgramPath $javaExe -ServerPort ([int]$port) -Force
+}
+
 Write-Host "Starting forecast server (Maven exec:java) on port $port..."
 & $mvn -q exec:java

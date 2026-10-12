@@ -36,7 +36,7 @@ bash scripts/ubuntu/run.sh
 
 ## Windows y la LAN del taller
 
-**`run.cmd`** solo arranca el servidor. Si la LAN falla, **`scripts\windows\fix-lan-access.cmd`** (admin/UAC) corrige **java.exe** en red privada.
+**`run.cmd`** arranca el servidor. Si la LAN falla: **`run.cmd --fix-permissions`** (UAC) corrige **java.exe** en red privada y arranca.
 
 ## Setup manual
 
@@ -49,7 +49,7 @@ Si lo haces a mano:
 | **JDK 21+** | `winget install Microsoft.OpenJDK.21` o [Adoptium](https://adoptium.net/) | `sudo apt install openjdk-21-jdk` |
 | **Maven 3.9+** | En PATH o deja que `setup` lo ponga en `.tools/` | Igual |
 | **Config** | Copia `.env.example` → `.env` y ajusta `MAIN_SERVER_URL` | Igual |
-| **Firewall (LAN)** | `scripts\windows\fix-lan-access.cmd` si la LAN falla | Abre el puerto en `ufw` si usas firewall |
+| **Firewall (LAN)** | `run.cmd --fix-permissions` si la LAN falla | Abre el puerto en `ufw` si usas firewall |
 
 Arranque manual:
 
