@@ -9,9 +9,13 @@ $Root = Resolve-Path (Join-Path $PSScriptRoot "../..")
 Set-Location $Root
 
 $fixPermissions = $false
+$noWatch = $false
 foreach ($a in @($RemainingArgs)) {
     if ($a -eq "--fix-permissions" -or $a -eq "-FixPermissions") {
         $fixPermissions = $true
+    }
+    if ($a -eq "--no-watch") {
+        $noWatch = $true
     }
 }
 
@@ -29,6 +33,8 @@ if (-not $mvn) {
     & (Join-Path $PSScriptRoot "setup.ps1")
     $mvn = if (Get-Command mvn -ErrorAction SilentlyContinue) { "mvn" } else { $PortableMaven }
 }
+
+$mvnExe = if ($mvn -eq "mvn") { (Get-Command mvn).Source } else { $mvn }
 
 if (Test-Path ".env") {
     Get-Content ".env" | ForEach-Object {
@@ -50,5 +56,11 @@ if ($fixPermissions) {
     & (Join-Path $PSScriptRoot "ensure-lan-access.ps1") -ProgramPath $javaExe -ServerPort ([int]$port) -Force
 }
 
-Write-Host "Starting forecast server (Maven exec:java) on port $port..."
-& $mvn -q exec:java
+if ($noWatch) {
+    Write-Host "Starting forecast server (Maven exec:java) on port $port..."
+    & $mvnExe -q exec:java
+    exit $LASTEXITCODE
+}
+
+. (Join-Path $PSScriptRoot "run-java-watch.ps1")
+Start-JavaForecastWithWatch -Root $Root -MvnExe $mvnExe -Port ([int]$port)

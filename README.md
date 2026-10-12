@@ -55,3 +55,5 @@ Arranque manual:
 ```bash
 mvn -q exec:java
 ```
+
+**`run.cmd`** recompila y reinicia al guardar en `src/main/java` (como `bun --watch` / uvicorn `--reload`). Sin recarga: `run.cmd --no-watch`.
