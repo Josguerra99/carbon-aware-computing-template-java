@@ -12,19 +12,13 @@ Desde la raíz del repo:
 scripts\windows\setup.cmd
 ```
 
-Si la regla de firewall falla, abre **Símbolo del sistema como administrador** y vuelve a ejecutar setup, o:
-
-```bat
-scripts\windows\open-lan-firewall.cmd 3916
-```
-
 **Ubuntu**
 
 ```bash
 bash scripts/ubuntu/setup.sh
 ```
 
-Luego edita `.env` y pon **`MAIN_SERVER_URL`** con la URL del facilitador. Regístrate en el taller (`/register`) con la IP de tu PC. En Windows, usa Wi‑Fi **Privada**.
+Luego edita `.env` y pon **`MAIN_SERVER_URL`** con la URL del facilitador. Regístrate en el taller (`/register`) con la IP de tu PC.
 
 ## Run
 
@@ -40,9 +34,13 @@ scripts\windows\run.cmd
 bash scripts/ubuntu/run.sh
 ```
 
+## Windows y la LAN del taller
+
+Al escuchar en **0.0.0.0:3916**, Windows puede crear reglas para **java.exe** y bloquear **Private** por error. **`run.cmd`** llama a `ensure-lan-access.ps1` antes del servidor (UAC si hace falta): quita esos Block, Allow en Private y regla de puerto LAN. Wi‑Fi **Private**; en el popup de Windows, **Permitir** en redes privadas.
+
 ## Setup manual
 
-El script de setup hace: crear `.env` si no existe, comprobar JDK 21+, resolver dependencias con Maven (y descargar Maven a `.tools/` si hace falta), y en Windows la regla de firewall para el puerto **3916** (red privada, solo LAN).
+El script de setup hace: crear `.env` si no existe, comprobar JDK 21+, resolver dependencias con Maven (y descargar Maven a `.tools/` si hace falta).
 
 Si lo haces a mano:
 

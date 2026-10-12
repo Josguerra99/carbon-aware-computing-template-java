@@ -30,7 +30,11 @@ if (Test-Path ".env") {
 }
 
 $port = if ($env:PORT) { $env:PORT } else { "3916" }
-$firewallCmd = Join-Path $PSScriptRoot "open-lan-firewall.cmd"
-& cmd.exe /c "`"$firewallCmd`" $port"
+$javaExe = (Get-Command java -ErrorAction SilentlyContinue).Source
+if ($javaExe) {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "ensure-lan-access.ps1") `
+        -ProgramPath $javaExe -Port ([int]$port)
+}
 Write-Host "Starting forecast server (Maven exec:java) on port $port..."
+Write-Host "Si Windows pregunta por el firewall: elige Red privada y Permitir." -ForegroundColor DarkYellow
 & $mvn -q exec:java
