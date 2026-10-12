@@ -33,7 +33,7 @@ $port = if ($env:PORT) { $env:PORT } else { "3916" }
 $javaExe = (Get-Command java -ErrorAction SilentlyContinue).Source
 if ($javaExe) {
     & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "ensure-lan-access.ps1") `
-        -ProgramPath $javaExe -Port ([int]$port)
+        -ProgramPath $javaExe -ServerPort ([int]$port)
 }
 Write-Host "Starting forecast server (Maven exec:java) on port $port..."
 Write-Host "Si Windows pregunta por el firewall: elige Red privada y Permitir." -ForegroundColor DarkYellow
