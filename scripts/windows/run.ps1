@@ -30,5 +30,7 @@ if (Test-Path ".env") {
 }
 
 $port = if ($env:PORT) { $env:PORT } else { "3916" }
+$firewallCmd = Join-Path $PSScriptRoot "open-lan-firewall.cmd"
+& cmd.exe /c "`"$firewallCmd`" $port"
 Write-Host "Starting forecast server (Maven exec:java) on port $port..."
 & $mvn -q exec:java

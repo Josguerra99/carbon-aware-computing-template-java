@@ -55,5 +55,8 @@ Write-Host "Maven: $(& $mvn -version 2>&1 | Select-Object -First 1)"
 Write-Host "Resolving dependencies..."
 & $mvn -q -DskipTests dependency:resolve compile
 
+$firewallCmd = Join-Path $PSScriptRoot "open-lan-firewall.cmd"
+& cmd.exe /c "`"$firewallCmd`" 3916"
+
 Write-Host ""
-Write-Host "Setup complete. Run: powershell -ExecutionPolicy Bypass -File scripts/windows/run.ps1" -ForegroundColor Green
+Write-Host "Setup complete. Run: scripts\windows\run.cmd" -ForegroundColor Green
