@@ -30,17 +30,5 @@ if (Test-Path ".env") {
 }
 
 $port = if ($env:PORT) { $env:PORT } else { "3916" }
-$javaExe = (Get-Command java -ErrorAction SilentlyContinue).Source
-
-Write-Host ""
-Write-Host "=== Red del taller (Windows) ===" -ForegroundColor Cyan
-Write-Host "1) Wi-Fi en perfil PRIVADA."
-Write-Host "2) Al abrir el puerto $port, si Windows pregunta por Java: RED PRIVADA y PERMITIR." -ForegroundColor Yellow
-Write-Host ""
-
-if ($javaExe) {
-    & (Join-Path $PSScriptRoot "ensure-lan-access.ps1") -ProgramPath $javaExe -ServerPort ([int]$port)
-}
-
 Write-Host "Starting forecast server (Maven exec:java) on port $port..."
 & $mvn -q exec:java

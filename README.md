@@ -36,7 +36,7 @@ bash scripts/ubuntu/run.sh
 
 ## Windows y la LAN del taller
 
-**`run.cmd`**: aviso al inicio; al arrancar Maven, el popup de **java.exe** (**Red privada** + **Permitir**). **UAC** solo si quedó **Block** en Private.
+**`run.cmd`** solo arranca el servidor. Si la LAN falla, **`scripts\windows\fix-lan-access.cmd`** (admin/UAC) corrige **java.exe** en red privada.
 
 ## Setup manual
 
@@ -49,7 +49,7 @@ Si lo haces a mano:
 | **JDK 21+** | `winget install Microsoft.OpenJDK.21` o [Adoptium](https://adoptium.net/) | `sudo apt install openjdk-21-jdk` |
 | **Maven 3.9+** | En PATH o deja que `setup` lo ponga en `.tools/` | Igual |
 | **Config** | Copia `.env.example` → `.env` y ajusta `MAIN_SERVER_URL` | Igual |
-| **Firewall (LAN)** | `scripts\windows\open-lan-firewall.cmd 3916` (admin si hace falta) | Abre el puerto en `ufw` si usas firewall |
+| **Firewall (LAN)** | `scripts\windows\fix-lan-access.cmd` si la LAN falla | Abre el puerto en `ufw` si usas firewall |
 
 Arranque manual:
 
