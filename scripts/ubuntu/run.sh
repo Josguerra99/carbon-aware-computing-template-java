@@ -70,7 +70,10 @@ stop_server() {
 start_server_bg() {
   stop_server
   echo "Compiling..."
-  "$MVN" -q compile
+  if ! "$MVN" compile; then
+    echo "Compile failed - fix errors and save again (still watching)."
+    return 1
+  fi
   echo "Server running (Ctrl+C to stop). Edit Java under src/main/java to reload."
   "$MVN" -q exec:java &
   server_pid=$!
@@ -78,10 +81,10 @@ start_server_bg() {
 
 trap 'stop_server; exit 0' INT TERM
 
-start_server_bg
+start_server_bg || true
 while true; do
   inotifywait -r -e modify,create,delete,move "$SRC" >/dev/null 2>&1 || continue
   sleep 0.8
-  echo "Changes detected — restarting..."
-  start_server_bg
+  echo "Changes detected - restarting..."
+  start_server_bg || true
 done
