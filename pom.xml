@@ -15,6 +15,7 @@
     <javalin.version>6.3.0</javalin.version>
     <jackson.version>2.17.2</jackson.version>
     <junit.version>5.11.0</junit.version>
+    <tensorflow.version>1.1.0</tensorflow.version>
   </properties>
 
   <dependencies>
@@ -40,6 +41,40 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <!-- CPU natives (default). Parallels @tensorflow/tfjs + @tensorflow/tfjs-node. -->
+    <profile>
+      <id>tf-cpu</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.tensorflow</groupId>
+          <artifactId>tensorflow-core-platform</artifactId>
+          <version>${tensorflow.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <!-- Linux + NVIDIA only; do not combine with tf-cpu. Like tfjs-node-gpu: mvn -Ptf-gpu ... -->
+    <profile>
+      <id>tf-gpu</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.tensorflow</groupId>
+          <artifactId>tensorflow-core-api</artifactId>
+          <version>${tensorflow.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.tensorflow</groupId>
+          <artifactId>tensorflow-core-native</artifactId>
+          <version>${tensorflow.version}</version>
+          <classifier>linux-x86_64-gpu</classifier>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
