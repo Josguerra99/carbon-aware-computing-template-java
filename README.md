@@ -57,3 +57,17 @@ mvn -q exec:java
 ```
 
 **`run.cmd`** recompila y reinicia al guardar en `src/main/java` (como `bun --watch` / uvicorn `--reload`). Sin recarga: `run.cmd --no-watch`.
+
+## TensorFlow Java en WSL (GPU) + proxy LAN
+
+Misma orquestación que la plantilla TypeScript: servidor en **WSL**, proxy Windows **:3916** → WSL **:3917** con `npm run start:wsl`.
+
+| Paso | Comando |
+| --- | --- |
+| Activar WSL (primera vez) | `npm run setup:wsl:host` |
+| JDK 21 + Maven + perfil `tf-gpu` si hay NVIDIA | `npm run setup:wsl` |
+| Recompilar con `-Ptf-gpu` | `npm run setup:wsl:gpu` |
+| Sitio + proxy + servidor Java en WSL | `npm run start:wsl:stack` |
+| Solo proxy + WSL | `npm run start:wsl` |
+
+Perfiles Maven: **`tf-cpu`** (default) y **`tf-gpu`** (Linux + NVIDIA). `.env`: `TF_BACKEND=gpu|cpu`, `MAIN_SERVER_URL`, `PORT=3916`.

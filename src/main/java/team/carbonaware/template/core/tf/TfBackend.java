@@ -14,4 +14,9 @@ public final class TfBackend {
     System.out.println("TensorFlow backend: " + name + " (configure tf-cpu / tf-gpu Maven profile)");
     return name;
   }
+
+  /** WSL setup smoke test entry point. */
+  public static void main(String[] args) {
+    ensureTfBackend();
+  }
 }
