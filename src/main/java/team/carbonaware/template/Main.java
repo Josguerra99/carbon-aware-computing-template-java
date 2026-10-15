@@ -6,11 +6,11 @@ import team.carbonaware.template.core.PredictionModel;
 import team.carbonaware.template.core.Types;
 
 public final class Main {
-  public static final PredictionModel WORKSHOP_MODEL = new SimplePredictionModel();
+  public static final PredictionModel WORKSHOP_MODEL = new MyPredictionModel();
 
   private Main() {}
 
-  public static final class SimplePredictionModel extends PredictionModel {
+  public static final class MyPredictionModel extends PredictionModel {
     @Override
     public void train(List<Types.GhiSlot> trainingData) {
     }
