@@ -8,20 +8,39 @@ import java.util.Random;
  * without requiring TensorFlow Java graph building in workshop Main.java.
  */
 public final class TfDenseRegressor {
-  private static final int[] LAYER_SIZES = {TfCommon.FEATURE_COUNT, 256, 128, 64, 32, 1};
+  /** Base {@code TfNeuralNetwork} (28 → 256 → 128 → 64 → 32 → 1). */
+  public static final int[] BASE_LAYER_SIZES = {
+    TfCommon.FEATURE_COUNT, 256, 128, 64, 32, 1
+  };
 
+  /** {@code TfNeuralNetworkEnhanced} (7 inputs, same hidden stack). */
+  public static final int[] ENHANCED_LAYER_SIZES = {
+    TfEnhancedCommon.ENHANCED_FEATURE_COUNT, 256, 128, 64, 32, 1
+  };
+
+  /** {@code HeliosComposer} (12 → 512 → 256 → 128 → 64 → 1). */
+  public static final int[] HELIOS_LAYER_SIZES = {
+    HeliosCommon.HELIOS_FEATURE_COUNT, 512, 256, 128, 64, 1
+  };
+
+  private final int[] layerSizes;
   private final double[][][] weights;
   private final double[][] biases;
   private final Random rng;
 
   public TfDenseRegressor(int seed) {
+    this(BASE_LAYER_SIZES, seed);
+  }
+
+  public TfDenseRegressor(int[] layerSizes, int seed) {
+    this.layerSizes = layerSizes.clone();
     this.rng = new Random(seed);
-    int layers = LAYER_SIZES.length - 1;
+    int layers = layerSizes.length - 1;
     weights = new double[layers][][];
     biases = new double[layers][];
     for (int l = 0; l < layers; l++) {
-      int in = LAYER_SIZES[l];
-      int out = LAYER_SIZES[l + 1];
+      int in = layerSizes[l];
+      int out = layerSizes[l + 1];
       weights[l] = new double[out][in];
       biases[l] = new double[out];
       double scale = Math.sqrt(2.0 / in);

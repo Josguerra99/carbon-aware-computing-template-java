@@ -13,4 +13,7 @@ public record TfTrainingConfig(
 
   public static final TfTrainingConfig DEFAULT_ENHANCED =
       new TfTrainingConfig(120_000, 12, 4096, 1e-3, 0.05, 42);
+
+  public static final TfTrainingConfig DEFAULT_HELIOS =
+      new TfTrainingConfig(120_000, 18, 4096, 8e-4, 0.05, 42);
 }
